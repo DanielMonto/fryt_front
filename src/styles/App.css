@@ -1,0 +1,9 @@
+body, html {
+    margin: 0;
+    padding: 0
+}
+
+.size-6 {
+    min-width: 18px;
+    min-height: 18px;
+}

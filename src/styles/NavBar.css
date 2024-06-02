@@ -1,0 +1,55 @@
+.nv-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nv-ul {
+    list-style: none;
+    display: flex;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background);
+    border-bottom: var(--border) solid 1px;
+    justify-content: space-between;
+}
+
+.nv-li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 10px;
+    margin: 5px 15px;
+    padding: 0.5rem 1rem;
+}
+
+.nv-a-title {
+    font-size: 24px;
+}
+
+.nv-li:hover {
+    background-color: var(--background-alt);
+}
+
+.nv-li:hover .nv-a {
+    color: var(--text-bright);
+}
+
+.nv-a:hover {
+    text-decoration: none;
+    text-decoration-style: none;
+}
+
+.nv-a {
+    color: var(--text-main);
+}
+
+.nv-signing {
+    display: flex;
+    flex-direction: row;
+}

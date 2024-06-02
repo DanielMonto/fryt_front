@@ -1,0 +1,63 @@
+.nf-container {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    flex-direction: column;
+    padding: 0;
+    gap: 10px;
+    justify-content: center;
+    min-height: 90vh;
+}
+
+.nf-form {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 4rem;
+    border-radius: 10px;
+    border: var(--text-main) solid 1px;
+    background-color: var(--background-alt);
+    font-weight: bold;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+}
+
+.nf-email, .nf-password {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+}
+
+.nf-email input, .nf-password input {
+    margin: 0;
+    border: var(--text-main) solid 1px;
+}
+
+.nf-button {
+    background-color: var(--background);
+    border: var(--text-main) solid 1px;
+}
+
+.nf-text {
+    color: var(--text-main);
+}
+
+.nf-error-text {
+    padding: 0;
+    max-width: 200px;
+    font-size: 10px;
+    text-align: center;
+    margin: 0;
+    color: #f14;
+}
+
+.nf-forget-password {
+    cursor: pointer;
+}
+
+h1, h2, h3{
+    padding: 0;
+    margin: 0;
+}
