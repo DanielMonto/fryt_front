@@ -67,8 +67,7 @@ export function AuthProvider({ children }) {
     }
 
     const fetchJWT = async (url, body = {}, method = 'GET' ) => {
-        const petition = async () => {
-            const response = await fetch(BACK_URL + url, {
+        const response = await fetch(BACK_URL + url, {
                 method,
                 headers: {
                     'Content-type': 'application/json',
@@ -76,12 +75,15 @@ export function AuthProvider({ children }) {
                 },
                 body: JSON.stringify(body)
             })
-            return response
-        }
         if (response.status===401){
             await refreshTokens()
+        }else if(response.ok){
+            const newExpAccessToken = Number(window.localStorage.getItem('ffr-auth-accessTokenExp')) + 1800
+            const newExpRefreshToken = Number(window.localStorage.getItem('ffr-auth-refreshTokenExp')) + 604800
+            window.localStorage.setItem('ffr-auth-accessTokenExp',newExpAccessToken.toString())
+            window.localStorage.setItem('ffr-auth-refreshTokenExp',newExpRefreshToken.toString())
         }
-        return petition()
+        return response
     }
 
     useEffect(() => {
@@ -94,19 +96,22 @@ export function AuthProvider({ children }) {
             if (expRefresh>Math.floor(Date.now()/1000)){
                 //TODO: notification that user must login again
                 navigate('/login')
-            }
-            setRefreshToken(storedRefreshToken)
-            const storedAccessToken = window.localStorage.getItem('ffr-auth-accessToken')
-            if (storedAccessToken!==null){
-                const expAccess = Number(window.localStorage.getItem('ffr-auth-accessTokenExp'))
-                if (isNaN(expAccess)){
-                    throw Error('Happened an error with manage of exp access')
-                }
-                if (expAccess>Math.floor(Date.now()/1000)){
-                    refreshTokens()
-                }
             }else{
-                throw Error('Happened an error with manage of stored access')
+                setRefreshToken(storedRefreshToken)
+                const storedAccessToken = window.localStorage.getItem('ffr-auth-accessToken')
+                if (storedAccessToken!==null){
+                    const expAccess = Number(window.localStorage.getItem('ffr-auth-accessTokenExp'))
+                    if (isNaN(expAccess)){
+                        throw Error('Happened an error with manage of exp access')
+                    }
+                    if (expAccess>Math.floor(Date.now()/1000)){
+                        refreshTokens()
+                    }else{
+                        setAccessToken(storedAccessToken)
+                    }
+                }else{
+                    throw Error('Happened an error with manage of stored access')
+                }
             }
         }
     },[])
