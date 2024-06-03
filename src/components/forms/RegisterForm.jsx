@@ -6,8 +6,11 @@ import { checkEmailWithoutConfirmation, checkPassword, checkUsername } from '@/s
 import EyeIcon from '@/components/icons/EyeIcon'
 import BaseInput from '../inputs/BaseInput'
 import useInputChange from '@/hooks/useInputChange'
+import { useNavigate } from 'react-router-dom'
 
 function RegisterForm() {
+    const navigate = useNavigate()
+
     const [[email, emailError], handleEmailChange, setEmail] = useInputChange(checkEmailWithoutConfirmation)
     const [[username, usernameError], handleUsernameChange, setUsername] = useInputChange(checkUsername)
     const [
@@ -69,6 +72,15 @@ function RegisterForm() {
                         setUsername([username,message])
                     }
                 })
+            }else{
+                if (saveData) {
+                    window.localStorage.setItem('ffr-login-email', email)
+                    window.localStorage.setItem('ffr-login-password', password)
+                }else{
+                    window.localStorage.removeItem('ffr-login-email')
+                    window.localStorage.removeItem('ffr-login-password')
+                }
+                navigate('/login')
             }
         })
     }

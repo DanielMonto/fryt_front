@@ -30,5 +30,5 @@ export const register = async (email, emailConfirmation, password, username) => 
         }
         return [false, passwordMessage, 'password']
     }
-    return [false, emailMessage, 'email']
+    return [false, emailMessage, 'email/emailConfirmation']
 }

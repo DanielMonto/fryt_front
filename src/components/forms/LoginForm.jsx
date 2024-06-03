@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useId, useState } from 'react'
 import EyeSlashIcon from '@/components/icons/EyeSlashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
@@ -6,13 +6,14 @@ import { checkEmailWithoutConfirmation, checkPassword } from '@/services/checkFi
 import BaseInput from '../inputs/BaseInput'
 import { useNavigate } from 'react-router-dom'
 import useInputChange from '@/hooks/useInputChange'
+import { login } from '../../services/auth/login'
 
 function LoginForm() {
 
     const navigate = useNavigate()
 
-    const [[email, emailError], handleEmailChange] = useInputChange(checkEmailWithoutConfirmation)
-    const [[password, passwordError], handlePasswordChange] = useInputChange(checkPassword)
+    const [[email, emailError], handleEmailChange, setEmail] = useInputChange(checkEmailWithoutConfirmation)
+    const [[password, passwordError], handlePasswordChange, setPassword] = useInputChange(checkPassword)
     const [canSeePassword, setCanSeePassword] = useState(false)
     const [saveData, setSaveData] = useState(false)
 
@@ -22,7 +23,35 @@ function LoginForm() {
 
     const handleSubmit = (event) => {
         event.preventDefault()
+        login(
+            email,
+            password
+        ).then(([exit, tokensOrMessage, field]) => {
+            if (!exit){
+                const fields = field.split('/')
+                fields.map(fieldName => {
+                    if (fieldName=='email'){
+                        setEmail([email,tokensOrMessage])
+                    }else if (fieldName=='password'){
+                        setPassword([password,tokensOrMessage])
+                    }
+                })
+            }else{
+                if (saveData) {
+                    window.localStorage.setItem('ffr-login-email', email)
+                    window.localStorage.setItem('ffr-login-password', password)
+                }else{
+                    window.localStorage.removeItem('ffr-login-email')
+                    window.localStorage.removeItem('ffr-login-password')
+                }
+            }
+        })
     }
+
+    useEffect(() => {
+        setEmail([window.localStorage.getItem('ffr-login-email')??'',''])
+        setPassword([window.localStorage.getItem('ffr-login-password')??'',''])
+    },[])
 
     return (
         <div className='nf-container'>
