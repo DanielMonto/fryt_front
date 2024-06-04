@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useId, useState } from 'react'
 import EyeSlashIcon from '@/components/icons/EyeSlashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
@@ -6,11 +6,13 @@ import { checkEmailWithoutConfirmation, checkPassword } from '@/services/checkFi
 import BaseInput from '../inputs/BaseInput'
 import { useNavigate } from 'react-router-dom'
 import useInputChange from '@/hooks/useInputChange'
-import { login } from '../../services/auth/login'
+import { login } from '@/services/auth/login'
+import { AuthContext } from '@/contexts/Auth'
 
 function LoginForm() {
 
     const navigate = useNavigate()
+    const [handleLogin] = useContext(AuthContext)
 
     const [[email, emailError], handleEmailChange, setEmail] = useInputChange(checkEmailWithoutConfirmation)
     const [[password, passwordError], handlePasswordChange, setPassword] = useInputChange(checkPassword)
@@ -44,6 +46,7 @@ function LoginForm() {
                     window.localStorage.removeItem('ffr-login-email')
                     window.localStorage.removeItem('ffr-login-password')
                 }
+                handleLogin(...tokensOrMessage)
             }
         })
     }
@@ -68,24 +71,18 @@ function LoginForm() {
                     labelMessage='Your email:'
                     inputPlaceholder='example@gmail.com'
                     inputValue={email}
-                    errorClasses='nf-error-text'
                     errorMessage={emailError}
                     onChangeFunction={handleEmailChange}
-                    labelClasses='nf-text'
-                    containerClasses='nf-email'
                 />
 
                 <BaseInput 
                     inputId={passwordInputId}
                     labelMessage='Your password:'
-                    inputPlaceholder='password123'
+                    inputPlaceholder='Password123'
                     inputValue={password}
-                    errorClasses='nf-error-text'
                     errorMessage={passwordError}
                     inputType={canSeePassword ? 'text' : 'password'}
                     onChangeFunction={handlePasswordChange}
-                    labelClasses='nf-text'
-                    containerClasses='nf-email'
                 >
                     <button 
                         type='button' 
@@ -111,8 +108,6 @@ function LoginForm() {
                     onClickFunction={(e) => {
                         setSaveData(e)
                     }}
-                    labelClasses='nf-text'
-                    containerClasses='nf-email'
                 />
 
                 <div className='nf-submit'>

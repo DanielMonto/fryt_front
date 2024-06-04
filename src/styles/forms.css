@@ -53,6 +53,15 @@
     color: #f14;
 }
 
+.nf-success-text {
+    padding: 0;
+    max-width: 200px;
+    font-size: 10px;
+    text-align: center;
+    margin: 0;
+    color: #0c0;
+}
+
 .nf-forget-password {
     cursor: pointer;
 }

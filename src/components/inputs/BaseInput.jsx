@@ -4,15 +4,15 @@ function BaseInput({
     children,
     inputId,
     labelMessage,
-    inputValue,
-    labelClasses,
-    containerClasses,
     onChangeFunction=(value)=>{},
     onClickFunction=(value)=>{},
+    inputValue,
+    containerClasses='nf-email',
     inputPlaceholder='',
     errorMessage='',
+    labelClasses='nf-text',
     inputClasses='',
-    errorClasses='',
+    errorClasses='nf-error-text',
     inputType='text'
 }) {
 

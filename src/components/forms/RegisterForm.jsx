@@ -100,11 +100,8 @@ function RegisterForm() {
                     labelMessage='Your username:'
                     inputPlaceholder='john_doe'
                     inputValue={username}
-                    errorClasses='nf-error-text'
                     errorMessage={usernameError}
                     onChangeFunction={handleUsernameChange}
-                    labelClasses='nf-text'
-                    containerClasses='nf-email'
                 />
 
                 <BaseInput 
@@ -112,13 +109,10 @@ function RegisterForm() {
                     labelMessage='Your email:'
                     inputPlaceholder='example@gmail.com'
                     inputValue={email}
-                    errorClasses='nf-error-text'
                     errorMessage={emailError}
                     onChangeFunction={(value)=>{
                         handleCheckEmail(value)
                     }}
-                    labelClasses='nf-text'
-                    containerClasses='nf-email'
                 />
 
                 <BaseInput 
@@ -126,26 +120,20 @@ function RegisterForm() {
                     labelMessage='Confirm your email:'
                     inputPlaceholder='example@gmail.com'
                     inputValue={emailConfirmation}
-                    errorClasses='nf-error-text'
                     errorMessage={emailConfirmationError}
                     onChangeFunction={(value)=>{
                         handleCheckEmail(value,false)
                     }}
-                    labelClasses='nf-text'
-                    containerClasses='nf-email'
                 />
 
                 <BaseInput 
                     inputId={passwordInputId}
                     labelMessage='Your password:'
-                    inputPlaceholder='password123'
+                    inputPlaceholder='Password123'
                     inputValue={password}
-                    errorClasses='nf-error-text'
                     errorMessage={passwordError}
                     inputType={canSeePassword ? 'text' : 'password'}
                     onChangeFunction={handlePasswordChange}
-                    labelClasses='nf-text'
-                    containerClasses='nf-email'
                 >
                     <button type='button' onClick={()=>setCanSeePassword(!canSeePassword)}>
                         {
@@ -162,8 +150,6 @@ function RegisterForm() {
                     onClickFunction={(e) => {
                         setSaveData(e)
                     }}
-                    labelClasses='nf-text'
-                    containerClasses='nf-email'
                 />
 
                 <div className='nf-submit'>
