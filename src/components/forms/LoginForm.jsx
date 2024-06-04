@@ -12,7 +12,7 @@ import { AuthContext } from '@/contexts/Auth'
 function LoginForm() {
 
     const navigate = useNavigate()
-    const [handleLogin] = useContext(AuthContext)
+    const { handleLogin } = useContext(AuthContext)
 
     const [[email, emailError], handleEmailChange, setEmail] = useInputChange(checkEmailWithoutConfirmation)
     const [[password, passwordError], handlePasswordChange, setPassword] = useInputChange(checkPassword)

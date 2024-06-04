@@ -27,7 +27,7 @@ export function AuthProvider({ children }) {
 
     const getUser = () => {
         if (logged){
-            const decodedAccess = jwtDecode(refreshToken)
+            const decodedAccess = jwtDecode(accessToken)
             return {
                 username: decodedAccess.user.username,
                 email: decodedAccess.user.email,
@@ -77,11 +77,6 @@ export function AuthProvider({ children }) {
             })
         if (response.status===401){
             await refreshTokens()
-        }else if(response.ok){
-            const newExpAccessToken = Number(window.localStorage.getItem('ffr-auth-accessTokenExp')) + 1800
-            const newExpRefreshToken = Number(window.localStorage.getItem('ffr-auth-refreshTokenExp')) + 604800
-            window.localStorage.setItem('ffr-auth-accessTokenExp',newExpAccessToken.toString())
-            window.localStorage.setItem('ffr-auth-refreshTokenExp',newExpRefreshToken.toString())
         }
         return response
     }

@@ -1,23 +1,18 @@
-import React, { useEffect, useId, useState } from 'react'
-import BaseInput from '../inputs/BaseInput'
-import { checkCode, checkEmailWithoutConfirmation } from '@/services/checkFields'
+import React from 'react'
 import useInputChange from '@/hooks/useInputChange'
-import { mailResetCode, resetPasswordWithCode } from '@/services/auth/forgotPassword'
 import { checkPassword } from '@/services/checkFields'
+import { resetPassword } from '@/services/auth/resetPassword'
 import { useNavigate } from 'react-router-dom'
-import EyeSlashIcon from '@/components/icons/EyeSlashIcon'
-import EyeIcon from '@/components/icons/EyeIcon'
 
-function ForgotPasswordForm() {
-    const emailToSendCodeId = useId()
-    const codeId = useId()
+function ResetPasswordForm() {
+    const navigate = useNavigate()
+
+    const oldPasswordId = useId()
     const newPasswordId = useId()
     const newPasswordConfirmationId = useId()
 
-    const navigate = useNavigate()
-
-    const [[email, emailError], handleEmailChange, setEmail] = useInputChange(checkEmailWithoutConfirmation)
-    const [[code, codeError], handleCodeChange, setCode] = useInputChange(checkCode)
+    const [[oldPassword, oldPasswordError], handleOldPasswordChange, setOldPassword] = useInputChange(checkPassword)
+    const [canSeePassword, setCanSeePassword] = useState(false)
     const [
         [
             newPassword,
@@ -34,9 +29,6 @@ function ForgotPasswordForm() {
         handleNewPasswordConfirmationChange,
         setNewPasswordConfirmation
     ] = useInputChange(checkPassword)
-
-    const [emailSent, setEmailSent] = useState(false)
-    const [canSeePassword, setCanSeePassword] = useState(false)
 
     const handleCheckPassword = (value, isConfirmation = false) => {
         if (!isConfirmation) {
@@ -58,96 +50,48 @@ function ForgotPasswordForm() {
         }
     }
 
-    const handleSubmitEmail = (event) => {
+    const handleSubmit = (event) => {
         event.preventDefault()
-        mailResetCode(email).then(([exit, message]) => {
-            if (!exit) {
-                setEmail([email, message])
-            }else{
-                setEmailSent(true)
-            }
-        })
-    }
-
-    const handleSubmitCode = (event) => {
-        event.preventDefault()
-        resetPasswordWithCode(
-            code,
+        resetPassword(
+            oldPassword,
             newPassword,
             newPasswordConfirmation
         ).then(([exit, message, field]) => {
-            if (!exit) {
+            if (!exit){
                 const fields = field.split('/')
                 fields.map(fieldName => {
-                    if (fieldName=='code'){
-                        setCode([code,message])
+                    if (fieldName=='old_password'){
+                        setOldPassword([oldPassword, message])
                     }else if (fieldName=='new_password'){
-                        setNewPassword([newPassword,message])
+                        setNewPassword([newPassword, message])
                     }else if (fieldName=='new_password_confirmation'){
-                        setNewPasswordConfirmation([newPasswordConfirmation,message])
+                        setNewPasswordConfirmation([newPasswordConfirmation, message])
                     }
                 })
             }else{
-                //TODO: notification saying password changed
-                navigate('/login')
+                //TODO: send notification password reset successfully
+                navigate('/')
             }
         })
     }
 
-    useEffect(() => {
-        setEmailSent(false)
-    },[])
-
     return (
         <div className='nf-container'>
-
-            <form className='nf-form' onSubmit={(e)=>handleSubmitEmail(e)}>
+            <form className='nf-form' onSubmit={handleSubmit}>
 
                 <div className='nf-title'>
-                    <h3 className='nf-title-text'>
-                        Submit your email
-                    </h3>
+                    <h2 className='nf-title-text'>
+                        <strong>Reset password</strong>
+                    </h2>
                 </div>
 
                 <BaseInput 
-                    inputId={emailToSendCodeId}
-                    labelMessage='Reset code email:'
-                    inputPlaceholder='example@gmail.com'
-                    inputValue={email}
-                    errorMessage={emailError}
-                    onChangeFunction={handleEmailChange}
-                />
-
-                <div className='nf-submit'>
-                    <button className='nf-button' type="submit">
-                        Request code
-                    </button>
-                </div>
-
-                {
-                    emailSent 
-                    && 
-                    <p className='nf-success-text'>
-                        We have send an email with a code to submit here:
-                    </p>
-                }
-
-            </form>
-
-            <form className='nf-form' onSubmit={(e)=>handleSubmitCode(e)}>
-                <div className='nf-title'>
-                    <h3 className='nf-title-text'>
-                        Submit your data
-                    </h3>
-                </div>
-
-                <BaseInput 
-                    inputId={codeId}
-                    labelMessage='Reset password code:'
-                    inputPlaceholder='0a0a0a0'
-                    inputValue={code}
-                    errorMessage={codeError}
-                    onChangeFunction={handleCodeChange}
+                    inputId={oldPasswordId}
+                    labelMessage='Your old password:'
+                    inputPlaceholder='Password123'
+                    inputValue={oldPassword}
+                    errorMessage={oldPasswordError}
+                    onChangeFunction={handleOldPasswordChange}
                 />
 
                 <BaseInput 
@@ -191,4 +135,4 @@ function ForgotPasswordForm() {
     )
 }
 
-export default ForgotPasswordForm
+export default ResetPasswordForm

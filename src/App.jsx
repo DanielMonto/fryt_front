@@ -6,6 +6,8 @@ import { NavBarProvider } from "@/contexts/NavBar"
 import RegisterPage from "@/components/pages/RegisterPage"
 import ForgotPasswordPage from "@/components/pages/ForgotPasswordPage"
 import { AuthProvider } from "@/contexts/Auth"
+import ProtectedRoute from "@/components/ProtectedRoute"
+import ResetPasswordPage from "@/components/pages/ResetPasswordPage"
 
 function App() {
   return (
@@ -13,12 +15,19 @@ function App() {
       <NavBarProvider>
         <Router>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={
+              <ProtectedRoute>
+                <HomePage/>
+              </ProtectedRoute>
+            } />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot_password" element={<ForgotPasswordPage />} />
-            {/* TODO: components-pages for these routes
-            <Route path="/reset-password/:token" element={<ResetPasswordPage />} /> */}
+            <Route path="/reset-password/" element={
+              <ProtectedRoute>
+                <ResetPasswordPage/>
+              </ProtectedRoute>
+            } />
           </Routes>
         </Router>
       </NavBarProvider>
