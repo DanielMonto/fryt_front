@@ -9,39 +9,34 @@ import { AuthProvider } from "@/contexts/Auth"
 import ProtectedRoute from "@/components/ProtectedRoute"
 import ResetPasswordPage from "@/components/pages/ResetPasswordPage"
 import { useEffect } from "react"
+import { ToastContainer } from "react-toastify"
 
 function App() {
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js').then(registration => {
-        console.log('Service Worker registered with scope: ', registration.scope)
-      }).catch(error => {
-        console.log('Service Worker registration failed: ', error)
-      })
-    }
-  },[])
   return (
-    <AuthProvider>
+    <>
+      <ToastContainer/>
       <NavBarProvider>
         <Router>
-          <Routes>
-            <Route path="/" element={
-              <ProtectedRoute>
-                <HomePage/>
-              </ProtectedRoute>
-            } />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/forgot_password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password/" element={
-              <ProtectedRoute>
-                <ResetPasswordPage/>
-              </ProtectedRoute>
-            } />
-          </Routes>
+          <AuthProvider>
+            <Routes>
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <HomePage/>
+                </ProtectedRoute>
+              } />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot_password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password/" element={
+                <ProtectedRoute>
+                  <ResetPasswordPage/>
+                </ProtectedRoute>
+              } />
+            </Routes>
+          </AuthProvider>
         </Router>
       </NavBarProvider>
-    </AuthProvider>
+    </>
   )
 }
 

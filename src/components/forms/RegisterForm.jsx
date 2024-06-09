@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { register } from '@/services/auth/register'
 import { useId, useState } from 'react'
 import EyeSlashIcon from '@/components/icons/EyeSlashIcon'
@@ -7,6 +7,8 @@ import EyeIcon from '@/components/icons/EyeIcon'
 import BaseInput from '../inputs/BaseInput'
 import useInputChange from '@/hooks/useInputChange'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import CheckIcon from '../icons/CheckIcon'
 
 function RegisterForm() {
     const navigate = useNavigate()
@@ -22,7 +24,9 @@ function RegisterForm() {
             setEmailConfirmation
         ] = useInputChange(checkEmailWithoutConfirmation)
     const [[password, passwordError], handlePasswordChange, setPassword] = useInputChange(checkPassword)
+
     const [canSeePassword, setCanSeePassword] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [saveData, setSaveData] = useState(false)
 
     const emailInputId = useId()
@@ -53,23 +57,33 @@ function RegisterForm() {
 
     const handleSubmit = (event) => {
         event.preventDefault()
+        if (loading) return null
+        setLoading(true)
+        const toastId = toast('Loading...',{
+            autoClose: false,
+        })
         register(
             email,
             emailConfirmation,
             password,
             username
         ).then(([exit, message, field]) => {
+            toast.dismiss(toastId)
             if(!exit){
                 const fields = field.split('/')
                 fields.map(fieldName => {
                     if (fieldName=='email'){
                         setEmail([email,message])
+                        setLoading(false)
                     }else if (fieldName=='emailConfirmation'){
                         setEmailConfirmation([emailConfirmation,message])
+                        setLoading(false)
                     }else if (fieldName=='password'){
                         setPassword([password,message])
+                        setLoading(false)
                     }else if (fieldName=='username'){
                         setUsername([username,message])
+                        setLoading(false)
                     }
                 })
             }else{
@@ -80,10 +94,25 @@ function RegisterForm() {
                     window.localStorage.removeItem('ffr-login-email')
                     window.localStorage.removeItem('ffr-login-password')
                 }
+                toast(
+                    <div>
+                        <h3 style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                            <CheckIcon/>
+                            Registered successfully
+                        </h3>
+                        <p style={{padding:0,margin:0}}>
+                            You must login now
+                        </p>
+                    </div>
+                )
                 navigate('/login')
             }
         })
     }
+
+    useEffect(() => {
+        setLoading(false)
+    },[])
 
     return (
         <div className='nf-container'>
@@ -153,7 +182,10 @@ function RegisterForm() {
                 />
 
                 <div className='nf-submit'>
-                    <button className='nf-button' type="submit">
+                    <button className={
+                        loading ?
+                        'nf-button nf-button-loading' :
+                        'nf-button'} type="submit">
                         Register
                     </button>
                 </div>

@@ -16,6 +16,8 @@ function LoginForm() {
 
     const [[email, emailError], handleEmailChange, setEmail] = useInputChange(checkEmailWithoutConfirmation)
     const [[password, passwordError], handlePasswordChange, setPassword] = useInputChange(checkPassword)
+
+    const [loading, setLoading] = useState(false)
     const [canSeePassword, setCanSeePassword] = useState(false)
     const [saveData, setSaveData] = useState(false)
 
@@ -25,6 +27,8 @@ function LoginForm() {
 
     const handleSubmit = (event) => {
         event.preventDefault()
+        if (loading) return null
+        setLoading(true)
         login(
             email,
             password
@@ -34,8 +38,10 @@ function LoginForm() {
                 fields.map(fieldName => {
                     if (fieldName=='email'){
                         setEmail([email,tokensOrMessage])
+                        setLoading(false)
                     }else if (fieldName=='password'){
                         setPassword([password,tokensOrMessage])
+                        setLoading(false)
                     }
                 })
             }else{
@@ -52,6 +58,7 @@ function LoginForm() {
     }
 
     useEffect(() => {
+        setLoading(false)
         setEmail([window.localStorage.getItem('ffr-login-email')??'',''])
         setPassword([window.localStorage.getItem('ffr-login-password')??'',''])
     },[])
@@ -111,7 +118,10 @@ function LoginForm() {
                 />
 
                 <div className='nf-submit'>
-                    <button className='nf-button' type="submit">
+                    <button className={
+                        loading ?
+                        'nf-button nf-button-loading' :
+                        'nf-button'} type="submit">
                         Log in
                     </button>
                 </div>

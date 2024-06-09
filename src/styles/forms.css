@@ -40,6 +40,10 @@
     border: var(--text-main) solid 1px;
 }
 
+.nf-button-loading {
+    cursor: not-allowed;
+}
+
 .nf-text {
     color: var(--text-main);
 }

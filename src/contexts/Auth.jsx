@@ -3,6 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { BACK_URL } from "@/services/constants";
 import { refreshTokenFunction } from "@/services/auth/refreshToken";
+import { toast } from "react-toastify";
 
 export const AuthContext = createContext(['',''])
 
@@ -61,7 +62,7 @@ export function AuthProvider({ children }) {
             window.localStorage.setItem('ffr-auth-accessToken', access_token)
             window.localStorage.setItem('ffr-auth-refreshToken', refresh_token)
         }else{
-            //TODO: notification that user must login again
+            toast('You must login')
             navigate('/login')
         }
     }
@@ -89,7 +90,7 @@ export function AuthProvider({ children }) {
                 throw Error('Happened an error with manage of exp refresh')
             }
             if (expRefresh>Math.floor(Date.now()/1000)){
-                //TODO: notification that user must login again
+                toast('You must login now')
                 navigate('/login')
             }else{
                 setRefreshToken(storedRefreshToken)

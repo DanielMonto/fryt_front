@@ -36,6 +36,7 @@ function ForgotPasswordForm() {
     ] = useInputChange(checkPassword)
 
     const [emailSent, setEmailSent] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [canSeePassword, setCanSeePassword] = useState(false)
 
     const handleCheckPassword = (value, isConfirmation = false) => {
@@ -71,6 +72,8 @@ function ForgotPasswordForm() {
 
     const handleSubmitCode = (event) => {
         event.preventDefault()
+        if (loading) return null
+        setLoading(true)
         resetPasswordWithCode(
             code,
             newPassword,
@@ -83,12 +86,14 @@ function ForgotPasswordForm() {
                         setCode([code,message])
                     }else if (fieldName=='new_password'){
                         setNewPassword([newPassword,message])
+                        setLoading(false)
                     }else if (fieldName=='new_password_confirmation'){
                         setNewPasswordConfirmation([newPasswordConfirmation,message])
+                        setLoading(false)
                     }
                 })
             }else{
-                //TODO: notification saying password changed
+                toast('Password changed successfully')
                 navigate('/login')
             }
         })
@@ -96,6 +101,7 @@ function ForgotPasswordForm() {
 
     useEffect(() => {
         setEmailSent(false)
+        setLoading(false)
     },[])
 
     return (

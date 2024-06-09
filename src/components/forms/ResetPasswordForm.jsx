@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import useInputChange from '@/hooks/useInputChange'
 import { checkPassword } from '@/services/checkFields'
 import { resetPassword } from '@/services/auth/resetPassword'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 function ResetPasswordForm() {
     const navigate = useNavigate()
@@ -12,7 +13,6 @@ function ResetPasswordForm() {
     const newPasswordConfirmationId = useId()
 
     const [[oldPassword, oldPasswordError], handleOldPasswordChange, setOldPassword] = useInputChange(checkPassword)
-    const [canSeePassword, setCanSeePassword] = useState(false)
     const [
         [
             newPassword,
@@ -29,6 +29,9 @@ function ResetPasswordForm() {
         handleNewPasswordConfirmationChange,
         setNewPasswordConfirmation
     ] = useInputChange(checkPassword)
+
+    const [canSeePassword, setCanSeePassword] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const handleCheckPassword = (value, isConfirmation = false) => {
         if (!isConfirmation) {
@@ -52,6 +55,8 @@ function ResetPasswordForm() {
 
     const handleSubmit = (event) => {
         event.preventDefault()
+        if (loading) return null
+        setLoading(true)
         resetPassword(
             oldPassword,
             newPassword,
@@ -62,18 +67,25 @@ function ResetPasswordForm() {
                 fields.map(fieldName => {
                     if (fieldName=='old_password'){
                         setOldPassword([oldPassword, message])
+                        setLoading(false)
                     }else if (fieldName=='new_password'){
                         setNewPassword([newPassword, message])
+                        setLoading(false)
                     }else if (fieldName=='new_password_confirmation'){
                         setNewPasswordConfirmation([newPasswordConfirmation, message])
+                        setLoading(false)
                     }
                 })
             }else{
-                //TODO: send notification password reset successfully
+                toast('Password reset successfully')
                 navigate('/')
             }
         })
     }
+
+    useEffect(() => {
+        setLoading(false)
+    },[])
 
     return (
         <div className='nf-container'>
@@ -126,7 +138,10 @@ function ResetPasswordForm() {
                 </BaseInput>
 
                 <div className='nf-submit'>
-                    <button className='nf-button' type="submit">
+                    <button className={
+                        loading ?
+                        'nf-button nf-button-loading' :
+                        'nf-button'} type="submit">
                         Reset password
                     </button>
                 </div>

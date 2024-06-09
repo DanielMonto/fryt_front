@@ -1,8 +1,10 @@
 .nv-container {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     display: flex;
+    width: 100vw;
+    height: 8vh;
     align-items: center;
     justify-content: center;
 }
@@ -10,9 +12,9 @@
 .nv-ul {
     list-style: none;
     display: flex;
-    width: 100vw;
-    margin: 0;
-    padding: 0;
+    height: 100%;
+    width: 100%;
+    padding:0 20px;
     background-color: var(--background);
     border-bottom: var(--border) solid 1px;
     justify-content: space-between;
@@ -24,8 +26,7 @@
     justify-content: center;
     cursor: pointer;
     border-radius: 10px;
-    margin: 5px 15px;
-    padding: 0.5rem 1rem;
+    padding: 5px;
 }
 
 .nv-a-title {
@@ -52,4 +53,5 @@
 .nv-signing {
     display: flex;
     flex-direction: row;
+    gap: 10px;
 }

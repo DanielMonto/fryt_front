@@ -4,6 +4,6 @@ body, html {
 }
 
 .size-6 {
-    min-width: 18px;
-    min-height: 18px;
+    width: 1.3rem;
+    height: 1.3rem;
 }
