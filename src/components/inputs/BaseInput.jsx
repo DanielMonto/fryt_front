@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 
 function BaseInput({
     children,
@@ -15,10 +15,6 @@ function BaseInput({
     errorClasses='nf-error-text',
     inputType='text'
 }) {
-
-    useEffect(() => {
-        onChangeFunction(inputValue)
-    },[])
 
     return (
         <div className={containerClasses}>

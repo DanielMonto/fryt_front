@@ -1,18 +1,20 @@
 .nf-container {
     display: flex;
     align-items: center;
-    margin: 0;
     flex-direction: column;
+    margin: 0;
     padding: 0;
     gap: 10px;
     justify-content: center;
     min-height: 90vh;
+    width: 100vw;
 }
 
 .nf-form {
     display: flex;
     flex-direction: column;
-    padding: 2rem 4rem;
+    padding: 2rem;
+    margin: 0;
     border-radius: 10px;
     border: var(--text-main) solid 1px;
     background-color: var(--background-alt);
@@ -68,9 +70,4 @@
 
 .nf-forget-password {
     cursor: pointer;
-}
-
-h1, h2, h3{
-    padding: 0;
-    margin: 0;
 }

@@ -4,15 +4,11 @@ function useInputChange(checkFunction) {
     const [[field, fieldError], setField] = useState(['', ''])
 
     const handleFieldChange = useCallback((value) => {
-        if (value.length === 0) {
-            setField([value, 'Field is required'])
+        const [exit, message] = checkFunction(value)
+        if (exit) {
+            setField([value, ''])
         } else {
-            const [exit, message] = checkFunction(value)
-            if (exit) {
-                setField([value, ''])
-            } else {
-                setField([value, message])
-            }
+            setField([value, message])
         }
     }, [checkFunction])
 
