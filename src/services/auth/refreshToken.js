@@ -11,11 +11,7 @@ export const refreshTokenFunction = async (refreshToken) => {
         })
     })
     if (!response.ok) {
-        if (response.status==401){
-            return [false, 'Refresh token invalid']
-        }else{
-            throw Error('Unknown error')
-        }
+        return [false, 'Refresh token invalid']
     }
     const data = await response.json()
     return [true, [data.access, data.refresh]]

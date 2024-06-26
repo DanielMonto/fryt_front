@@ -5,7 +5,10 @@ import NavBarUnlogged from './navbars/NavBarUnlogged'
 
 function NavBar() {
     const { logged } = useContext(AuthContext)
-    return logged ? <NavBarLogged/> : <NavBarUnlogged/> 
+    if (logged) {
+        return <NavBarLogged/>
+    }
+    return <NavBarUnlogged/>
 }
 
 export default NavBar

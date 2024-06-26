@@ -1,9 +1,11 @@
-import { createContext, useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom";
-import { BACK_URL } from "@/services/constants";
-import { refreshTokenFunction } from "@/services/auth/refreshToken";
-import { toast } from "react-toastify";
+import { createContext, useEffect, useState } from "react"
+import { jwtDecode } from "jwt-decode"
+import { useNavigate } from "react-router-dom"
+import { BACK_URL } from "@/services/constants"
+import { refreshTokenFunction } from "@/services/auth/refreshToken"
+import { toast } from "react-toastify"
+import { createGuestUser } from "@/services/auth/createGuestUser"
+import { loginGuestUser } from "@/services/auth/login"
 
 export const AuthContext = createContext(['',''])
 
@@ -16,27 +18,42 @@ export function AuthProvider({ children }) {
 
     const handleLogin = (access_token, refresh_token) => {
         setLogged(true)
-        const [decodedAccess, decodedRefresh] = [jwtDecode(access_token), jwtDecode(refresh_token)]
+        const decodedAccess = jwtDecode(access_token)
+        const decodedRefresh = jwtDecode(refresh_token)
         setRefreshToken(refresh_token)
         setAccessToken(access_token)
-        setUser(getUser())
-        window.localStorage.setItem('ffr-auth-accessTokenExp',decodedAccess.exp.toString())
-        window.localStorage.setItem('ffr-auth-refreshTokenExp',decodedRefresh.exp.toString())
-        window.localStorage.setItem('ffr-auth-accessToken',accessToken)
-        window.localStorage.setItem('ffr-auth-refreshToken',refreshToken)
+        setUser(getUser(decodedAccess))
+        window.localStorage.setItem('ffr-auth-accessTokenExp', decodedAccess.exp.toString())
+        window.localStorage.setItem('ffr-auth-refreshTokenExp', decodedRefresh.exp.toString())
+        window.localStorage.setItem('ffr-auth-accessToken', access_token)
+        window.localStorage.setItem('ffr-auth-refreshToken', refresh_token)
     }
+    
 
-    const getUser = () => {
-        if (logged){
-            const decodedAccess = jwtDecode(accessToken)
-            return {
-                username: decodedAccess.user.username,
-                email: decodedAccess.user.email,
-                is_staff: decodedAccess.user.is_staff,
-                id: decodedAccess.user.id
-            }
+    const getUser = (decodedAccess) => {
+        if (!decodedAccess.user) {
+            throw new Error("Invalid token: missing user data")
         }
-        return null
+        return {
+            username: decodedAccess.user.username,
+            email: decodedAccess.user.email,
+            is_staff: decodedAccess.user.is_staff,
+            is_guest: decodedAccess.user.is_guest,
+            id: decodedAccess.user.id
+        }
+    }
+    
+
+    const handleGuest = async () => {
+        const toastId = toast('Creating guest user...',{
+            position: 'top-right',
+            autoClose: false
+        })
+        const user = await createGuestUser()
+        const [guestAccessToken, guestRefreshToken] = await loginGuestUser(user.username)
+        handleLogin(guestAccessToken, guestRefreshToken)
+        toast.dismiss(toastId)
+        navigate('/')
     }
 
     const handleLogout = () => {
@@ -50,9 +67,10 @@ export function AuthProvider({ children }) {
         window.localStorage.removeItem('ffr-auth-refreshTokenExp')
     }
 
-    const refreshTokens = async () => {
-        const [exit, tokens] = await refreshTokenFunction(refreshToken)
+    const refreshTokens = async (refreshTokenParam = null) => {
+        const [exit, tokens] = await refreshTokenFunction(refreshTokenParam ?? refreshToken)
         if (exit) {
+            setLogged(true)
             const [access_token, refresh_token] = tokens
             const [decodedAccess, decodedRefresh] = [jwtDecode(access_token), jwtDecode(refresh_token)]
             setAccessToken(access_token)
@@ -62,13 +80,27 @@ export function AuthProvider({ children }) {
             window.localStorage.setItem('ffr-auth-accessToken', access_token)
             window.localStorage.setItem('ffr-auth-refreshToken', refresh_token)
         }else{
-            toast('You must login')
+            toast('You must login',{
+                position: 'bottom-center'
+            })
+            handleLogout()
             navigate('/login')
         }
     }
 
-    const fetchJWT = async (url, body = {}, method = 'GET' ) => {
-        const response = await fetch(BACK_URL + url, {
+    const fetchJWT = async (url, body = {}, method = 'GET') => {
+        let response = await fetch(BACK_URL + url, {
+            method,
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken
+            },
+            body: JSON.stringify(body)
+        })
+
+        if (response.status === 401) {
+            await refreshTokens()
+            response = await fetch(BACK_URL + url, {
                 method,
                 headers: {
                     'Content-type': 'application/json',
@@ -76,40 +108,46 @@ export function AuthProvider({ children }) {
                 },
                 body: JSON.stringify(body)
             })
-        if (response.status===401){
-            await refreshTokens()
         }
         return response
     }
 
     useEffect(() => {
+        setLogged(false)
         const storedRefreshToken = window.localStorage.getItem('ffr-auth-refreshToken')
-        if (storedRefreshToken!==null){
-            const expRefresh = Number(window.localStorage.getItem('ffr-auth-refreshTokenExp'))
-            if (isNaN(expRefresh)){
-                throw Error('Happened an error with manage of exp refresh')
-            }
-            if (expRefresh>Math.floor(Date.now()/1000)){
-                toast('You must login now')
-                navigate('/login')
-            }else{
-                setRefreshToken(storedRefreshToken)
-                const storedAccessToken = window.localStorage.getItem('ffr-auth-accessToken')
-                if (storedAccessToken!==null){
-                    const expAccess = Number(window.localStorage.getItem('ffr-auth-accessTokenExp'))
-                    if (isNaN(expAccess)){
-                        throw Error('Happened an error with manage of exp access')
-                    }
-                    if (expAccess>Math.floor(Date.now()/1000)){
-                        refreshTokens()
-                    }else{
-                        setAccessToken(storedAccessToken)
-                    }
-                }else{
-                    throw Error('Happened an error with manage of stored access')
-                }
-            }
+        if (!storedRefreshToken){
+            handleGuest()
+            return undefined
         }
+        const expRefresh = Number(window.localStorage.getItem('ffr-auth-refreshTokenExp'))
+        if (isNaN(expRefresh) || expRefresh < Math.floor(Date.now()/1000)) {
+            if (isNaN(expRefresh)){
+                handleGuest()
+                return undefined
+            }
+            toast('You must login now',{
+                position: 'bottom-center'
+            })
+            handleLogout()
+            navigate('/')
+            return undefined
+        }
+        const storedAccessToken = window.localStorage.getItem('ffr-auth-accessToken')
+        if (!storedAccessToken){
+            handleGuest()
+            return undefined
+        }
+        const expAccess = Number(window.localStorage.getItem('ffr-auth-accessTokenExp'))
+        if (isNaN(expAccess) || expAccess < Math.floor(Date.now()/1000)) {
+            if (isNaN(expRefresh)){
+                handleGuest()
+                return undefined
+            }
+            refreshTokens(storedRefreshToken)
+            return undefined
+        }
+        handleLogin(storedAccessToken, storedRefreshToken)
+        navigate('/')
     },[])
 
     return (

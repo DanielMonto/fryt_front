@@ -1,6 +1,10 @@
-.hp-main {
+.hp-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    padding: 0;
+    padding-top: 18px;
+    margin: 0;
+    width: 100vw;
+    height: 92vh;
+    background-color: var(--background);
+    justify-content: space-between;
 }

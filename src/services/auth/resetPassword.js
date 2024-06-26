@@ -1,17 +1,12 @@
-import { useContext } from "react"
-import { AuthContext } from "../../contexts/Auth"
-
-
-export const resetPassword = async (old_password, new_password, new_password_confirmation) => {
-    const { fetchJWT } = useContext(AuthContext)
+export const resetPassword = async (old_password, new_password, new_password_confirmation, fetchJWT) => {
     const response = await fetchJWT(
-        url = '/auth/reset_password/',
-        body = {
+        '/auth/reset_password/',
+        {
             old_password,
             new_password,
             new_password_confirmation
         },
-        method = 'POST'
+        'POST'
     )
     if (!response.ok){
         const data = await response.json()

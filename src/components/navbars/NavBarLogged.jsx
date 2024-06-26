@@ -1,9 +1,12 @@
 import { useNavigate } from 'react-router-dom'
-import React from 'react'
+import React,{ useContext } from 'react'
+import { AuthContext } from "@/contexts/Auth"
 import '@/styles/NavBar.css'
 import { logout } from '@/services/auth/logout'
+import { toast } from 'react-toastify'
 
 function NavBarLogged() {
+    const { refreshToken, handleLogout, user } = useContext(AuthContext) 
     const navigate = useNavigate()
     return (
         <>
@@ -31,16 +34,26 @@ function NavBarLogged() {
                             </a>
                         </li>
                         <li className='nv-li' 
-                            onClick={(e)=>logout().then(
+                            onClick={(e)=>{
+                                const toastId = toast('Loading...',{
+                                    autoClose:false,
+                                    position: 'bottom-center'
+                                })
+                                logout(refreshToken).then(
                                 (..._) => {
+                                    toast.dismiss(toastId)
+                                    handleLogout()
                                     navigate('/')
                                 }
-                            )}>
+                            )}}>
                             <a className='nv-a' >
                                 Logout
                             </a>
                         </li>
                     </div>
+                    <li className='nv-li'>
+                        @{user.username}
+                    </li>
                 </ul>
             </div>
         </>

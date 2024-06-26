@@ -6,6 +6,7 @@ function BaseInput({
     labelMessage,
     onChangeFunction=(value)=>{},
     onClickFunction=(value)=>{},
+    maxLength=250,
     inputValue,
     containerClasses='nf-email',
     inputPlaceholder='',
@@ -31,6 +32,7 @@ function BaseInput({
                 id={inputId}
                 value={inputValue}
                 type={inputType}
+                maxLength={maxLength}
                 onClick={(e) => onClickFunction(e.target.value)}
                 onChange={(e) => onChangeFunction(e.target.value)}
                 placeholder={inputPlaceholder}

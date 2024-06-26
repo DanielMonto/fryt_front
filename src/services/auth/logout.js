@@ -1,19 +1,15 @@
 import { BACK_URL } from "../constants"
-import { useContext } from "react"
-import { AuthContext } from "@/contexts/Auth"
 
-export const logout = async () => {
-    const { refreshToken, handleLogout } = useContext(AuthContext)
+export const logout = async (refreshToken) => {
     const response = await fetch(BACK_URL+'/auth/',{
-        method: 'POST',
+        method: 'DELETE',
         headers: {
             'Content-type': 'application/json'
             },
         body: JSON.stringify({
-            refreshToken
+            'refresh_token':refreshToken
         })
     })
-    handleLogout()
     const data = await response.json()
     if (!response.ok){
         if (data.message===undefined || data.field===undefined){

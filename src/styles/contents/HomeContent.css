@@ -1,0 +1,15 @@
+.hp-content-container {
+    flex-grow: 2;
+    flex-basis: 0;
+    margin: 0;
+    padding: 0;
+    padding-left: 170px;
+    padding-right: 170px;
+}
+
+.hp-content-container > div {
+    border-radius: 10px;
+    background-color: var(--background-alt);
+    padding: 10px;
+    box-shadow: 0 5px 10px -8px #111;
+}

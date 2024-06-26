@@ -16,8 +16,9 @@
     width: 100%;
     padding: 0 1rem;
     margin: 0;
-    background-color: var(--background);
+    background-color: var(--background-alt);
     border-bottom: var(--border) solid 1px;
+    box-shadow: 0 0 10px 0 #111;
     justify-content: space-between;
 }
 
@@ -35,7 +36,9 @@
 }
 
 .nv-li:hover {
-    background-color: var(--background-alt);
+    box-sizing: border-box;
+    background-color: var(--background-body);
+    border-bottom: 1px solid var(--text-main);
 }
 
 .nv-li:hover .nv-a {

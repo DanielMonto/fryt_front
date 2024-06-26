@@ -1,0 +1,38 @@
+.faa-container {
+    flex-grow: 1;
+    flex-basis: 0;
+    height: 92vh;
+}
+
+.faa-ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.faa-li {
+    margin: 1px;
+    margin-left: 5px;
+    margin-right: 5px;
+    box-sizing: border-box;
+    padding: 15px 0;
+    padding-left: 5px;
+    border-radius: 10px;
+}
+
+.faa-li:hover {
+    background-color: var(--background-alt);
+}
+
+.faa-li:first-child {
+    margin-top: 5px;
+}
+
+.faa-a:hover {
+    text-decoration: none;
+}
+
+.faa-a {
+    color: var(--text-bright);
+    font-weight: 500;
+}

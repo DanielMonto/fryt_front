@@ -60,7 +60,8 @@ function RegisterForm() {
         if (loading) return null
         setLoading(true)
         const toastId = toast('Loading...',{
-            autoClose: false,
+            autoClose:false,
+            position: 'bottom-center'
         })
         register(
             email,
@@ -128,6 +129,7 @@ function RegisterForm() {
                     inputId={usernameInputId}
                     labelMessage='Your username:'
                     inputPlaceholder='john_doe'
+                    maxLength={150}
                     inputValue={username}
                     errorMessage={usernameError}
                     onChangeFunction={handleUsernameChange}

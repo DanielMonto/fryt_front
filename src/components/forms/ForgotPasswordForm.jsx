@@ -7,6 +7,7 @@ import { checkPassword } from '@/services/checkFields'
 import { useNavigate } from 'react-router-dom'
 import EyeSlashIcon from '@/components/icons/EyeSlashIcon'
 import EyeIcon from '@/components/icons/EyeIcon'
+import { toast } from 'react-toastify'
 
 function ForgotPasswordForm() {
     const emailToSendCodeId = useId()
@@ -74,11 +75,16 @@ function ForgotPasswordForm() {
         event.preventDefault()
         if (loading) return null
         setLoading(true)
+        const toastId = toast('Loading...',{
+            autoClose:false,
+            position: 'bottom-center'
+        })
         resetPasswordWithCode(
             code,
             newPassword,
             newPasswordConfirmation
         ).then(([exit, message, field]) => {
+            toast.dismiss(toastId)
             if (!exit) {
                 const fields = field.split('/')
                 fields.map(fieldName => {

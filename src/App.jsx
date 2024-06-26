@@ -8,7 +8,6 @@ import ForgotPasswordPage from "@/components/pages/ForgotPasswordPage"
 import { AuthProvider } from "@/contexts/Auth"
 import ProtectedRoute from "@/components/ProtectedRoute"
 import ResetPasswordPage from "@/components/pages/ResetPasswordPage"
-import { useEffect } from "react"
 import { ToastContainer } from "react-toastify"
 
 function App() {
@@ -27,7 +26,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/forgot_password" element={<ForgotPasswordPage />} />
-              <Route path="/reset-password/" element={
+              <Route path="/reset_password/" element={
                 <ProtectedRoute>
                   <ResetPasswordPage/>
                 </ProtectedRoute>

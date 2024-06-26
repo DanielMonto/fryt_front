@@ -1,13 +1,13 @@
 import React from 'react'
 import LoginForm from '@/components/forms/LoginForm'
 import '@/styles/forms.css'
-import NavBar from '../NavBar'
+import NavBarUnlogged from '../navbars/NavBarUnlogged'
 
 
 function LoginPage() {
     return (
         <>
-            <NavBar/>
+            <NavBarUnlogged/>
             <LoginForm/>
         </>
     )

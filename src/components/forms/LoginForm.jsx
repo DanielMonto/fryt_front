@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import useInputChange from '@/hooks/useInputChange'
 import { login } from '@/services/auth/login'
 import { AuthContext } from '@/contexts/Auth'
+import { toast } from 'react-toastify'
 
 function LoginForm() {
 
@@ -29,10 +30,15 @@ function LoginForm() {
         event.preventDefault()
         if (loading) return null
         setLoading(true)
+        const toastId = toast('Loading...',{
+            autoClose:false,
+            position: 'bottom-center'
+        })
         login(
             email,
             password
         ).then(([exit, tokensOrMessage, field]) => {
+            toast.dismiss(toastId)
             if (!exit){
                 const fields = field.split('/')
                 fields.map(fieldName => {
@@ -52,7 +58,9 @@ function LoginForm() {
                     window.localStorage.removeItem('ffr-login-email')
                     window.localStorage.removeItem('ffr-login-password')
                 }
-                handleLogin(...tokensOrMessage)
+                const [ accessToken, refreshToken ] = tokensOrMessage
+                handleLogin(accessToken, refreshToken)
+                navigate('/')
             }
         })
     }
@@ -121,7 +129,7 @@ function LoginForm() {
                     <button className={
                         loading ?
                         'nf-button nf-button-loading' :
-                        'nf-button'} type="submit">
+                        'nf-button'} disabled={loading} type="submit">
                         Log in
                     </button>
                 </div>
